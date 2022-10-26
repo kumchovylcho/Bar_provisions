@@ -76,12 +76,11 @@ def look_through_json(name, phone_number, add_info_window):
     add_info_window.destroy()
 
 
-with open("app_information.json", "r") as data:
-    program_data = json.load(data)
-
 app_information = {
     "distributors": {}
 }
+with open("app_information.json", "r+", encoding='utf-8') as data:
+    program_data = json.load(data)
 
 window_frame = Tk()
 app_width = 1000
@@ -111,6 +110,5 @@ frame_window = Frame(window_frame, width=app_width // 2, height=450, bg='powder 
 frame_window.place(x=230, y=80)
 
 window_frame.mainloop()
-# adding the changes to the json file
-with open('app_information.json', 'w') as json_file:
-    json.dump(program_data, json_file)
+with open('app_information.json', 'w', encoding='utf-8') as data:
+    json.dump(program_data, data)
