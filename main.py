@@ -1,5 +1,6 @@
 from tkinter import *
 import json
+import os.path
 
 
 def show_distributors_info():
@@ -76,11 +77,19 @@ def look_through_json(name, phone_number, add_info_window):
     add_info_window.destroy()
 
 
+def read_json(all_data):
+    if not os.path.isfile('app_information.json'):
+        with open("app_information.json", "w") as file:
+            json.dump(all_data, file)
+    with open("app_information.json", 'r') as f:
+        take_from_file = json.load(f)
+    return take_from_file
+
+
 app_information = {
-    "distributors": {}
+    "distributors": {},
+    "products": {}
 }
-with open("app_information.json", "r+", encoding='utf-8') as data:
-    program_data = json.load(data)
 
 window_frame = Tk()
 app_width = 1000
@@ -109,6 +118,8 @@ distributors.grid(row=0, column=0)
 frame_window = Frame(window_frame, width=app_width // 2, height=450, bg='powder blue')
 frame_window.place(x=230, y=80)
 
+program_data = read_json(app_information)
 window_frame.mainloop()
-with open('app_information.json', 'w', encoding='utf-8') as data:
-    json.dump(program_data, data)
+with open('app_information.json', 'w') as data:
+    json.dump(program_data, data, indent=2)
+
