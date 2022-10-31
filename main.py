@@ -1,10 +1,10 @@
+from read_json import *
+from add_new_distributor import *
 from tkinter import *
 from tkinter import messagebox
-import json
-import os.path
 
 
-def update_screen_distributors():
+def update_distributors():
     """
     Making a frame to use its parameters so the Text box can be positioned and the scrollbar can be added to the frame.
     The scrollbar is set to be on the right side of the text and set to be vertical.
@@ -39,36 +39,6 @@ def update_screen_distributors():
     showing_all_distributors.pack(side=LEFT, fill=BOTH)
     scrollbar.config(command=showing_all_distributors.yview())
     showing_all_distributors.config(state=DISABLED, pady=3)
-
-
-def show_distributor_options():
-    """
-    Added a button right above the frame visible only after the Distributors button is clicked.The Add Distributor
-    button leads to another function.
-    Added a button right after Add Distributor button which deletes current distributor with all the phone numbers
-    if there are any saved.
-    Added a button which removes a single distributor and all of his phone numbers, which if you click on DELETE
-    it opens up a confirmation window.
-    Added a "Add phone-number" button next to the "Remove Distributor" button which leads to another function
-    for validation process.
-    Added a "Remove phone-number" button next to the "Add phone-number" button which leads to another function for
-    validation process.
-    Calling "update_screen_distributors" to update the screen with changes if there are any.
-    """
-
-    add_extra_distributors = Button(window_frame, text='Add Distributor', bd=3, command=add_new_distributor)
-    add_extra_distributors.place(x=230, y=53)
-
-    remove_distributor = Button(window_frame, text='Remove Distributor', bd=3, command=delete_distributor)
-    remove_distributor.place(x=324, y=53)
-
-    add_phone_number = Button(window_frame, text='Add phone-number', bd=3, command=add_new_phone_number)
-    add_phone_number.place(x=439, y=53)
-
-    remove_phone_number = Button(window_frame, text='Remove phone-number', bd=3, command=delete_phone_number)
-    remove_phone_number.place(x=558, y=53)
-
-    update_screen_distributors()
 
 
 def delete_distributor():
@@ -112,7 +82,7 @@ def delete_distributor_confirmation(distributor_check, delete_distri_window):
     elif user_input_from_button not in program_data["distributors"]:
         messagebox.showerror("Error", f"Distributor {user_input_from_button} does not exist!")
     delete_distri_window.destroy()
-    update_screen_distributors()
+    update_distributors()
 
 
 def delete_phone_number():
@@ -153,28 +123,7 @@ def delete_phone_validation(window, phone, distributor):
         elif distributor not in program_data['distributors']:
             messagebox.showerror("Error", f"Distributor: {distributor} does not exist in data base.")
     window.destroy()
-    update_screen_distributors()
-
-
-def add_new_distributor():
-    """
-    This function makes a window with geometry to center the window in the middle when it opens.
-    The window is not resizable
-    You can write distributor distributor_name and their phone number, and then you can press the ADD button to save
-    the changes.
-    If the information you filled is unique, then the changes will be applied.
-    The ADD button sends the entry from entry_text and entry_phone_number to function named "look_through_json"
-    """
-    distributor_add_window = Tk()
-    distributor_add_window.title("Add")
-    distributor_add_window.geometry('250x150+800+400')
-    distributor_add_window.resizable(False, False)
-    title_name = Label(distributor_add_window, bd=3, text='Distributor', font='Arial 15')
-    entry_text = Entry(distributor_add_window, bd=3, width=50, bg='powder blue', font='Arial 30')
-    title_name.pack()
-    entry_text.pack()
-    Button(distributor_add_window, text='ADD', bd=3, font='Arial 15', bg='light green',
-           command=lambda: look_through_json(entry_text, distributor_add_window)).pack()
+    update_distributors()
 
 
 def add_new_phone_number():
@@ -214,42 +163,8 @@ def new_phone_number_validation(window, phone_number, distributor_name):
                                           f"Please write a correct distributor name.")
 
     window.destroy()
-    update_screen_distributors()
+    update_distributors()
 
-
-def look_through_json(distributor_name, add_info_window):
-    """
-    Parameter distributor_name and phone_number is taken after the ADD button is clicked.
-    Checking if distributor_name and phone_number are not empty.
-    Adding the distributor distributor_name to the json file if it is unique which means it doesn't exist , so is the
-    phone number. If the distributor_name exists, but new phone number is added which must be unique,
-    the phone number is saved.                     NEED TO CHANGE DOC STRING
-    """
-    distributor_name = distributor_name.get().capitalize()
-    if distributor_name:
-        if distributor_name not in program_data["distributors"]:
-            program_data["distributors"][distributor_name] = distributor_name
-            program_data["distributors"][distributor_name] = {"phone_numbers": []}
-            messagebox.showinfo('Added', f'{distributor_name} distributor has been added to the data base.')
-    elif not distributor_name:
-        messagebox.showinfo("Error", "Please fill in a distributor name.")
-    add_info_window.destroy()
-    update_screen_distributors()
-
-
-def read_json(all_data):
-    if not os.path.isfile('app_information.json'):
-        with open("app_information.json", "w") as file:
-            json.dump(all_data, file)
-    with open("app_information.json", 'r') as f:
-        take_from_file = json.load(f)
-    return take_from_file
-
-
-app_information = {
-    "distributors": {},
-    "products": {}
-}
 
 window_frame = Tk()
 app_width = 1000
@@ -270,15 +185,36 @@ window_frame.title('Bar-Manager')
 window_frame.configure(bg='#C1C1FF')
 
 # distributors button
-distributors = Button(window_frame, text='Distributors', bd=3, width=15, height=2, command=show_distributor_options)
+distributors = Button(window_frame, text='Distributors', bd=3, font='Arial 18', width=12, command=update_distributors)
 # distributor button position
 distributors.place(x=0, y=0)
+
+add_extra_distributors = Button(window_frame, text='Add Distributor', bd=3, font='Arial 11',
+                                width=15, command=lambda: add_new_distributor(program_data, update_distributors))
+add_extra_distributors.place(x=-1, y=48)
+
+remove_distributor = Button(window_frame, text='Remove Distributor', font='Arial 10', bd=3, width=17,
+                            bg='red', command=delete_distributor)
+remove_distributor.place(x=-2, y=140)
+
+add_phone_number = Button(window_frame, text='Add phone-number', bd=3, font='Arial 11',
+                          width=15, command=add_new_phone_number)
+add_phone_number.place(x=-1, y=79)
+
+remove_phone_number = Button(window_frame, text='Remove phone-number', bd=3, font='Arial 10',
+                             width=17, command=delete_phone_number)
+remove_phone_number.place(x=-2, y=109)
+
+# # products button
+# products = Button(window_frame, text='Products', width=14, bd=3, font='Arial 16',
+#                   command=lambda: update_products(window_frame))
+# # products button position
+# products.place(x=0, y=170)
 
 # adding a frame in the middle of screen to show result of buttons
 frame_window = Frame(window_frame, width=app_width // 2, height=450, bg='powder blue')
 frame_window.place(x=230, y=80)
 
-program_data = read_json(app_information)
+program_data = read_json()
 window_frame.mainloop()
-with open('app_information.json', 'w') as data:
-    json.dump(program_data, data, indent=2)
+save_on_close(program_data)
