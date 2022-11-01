@@ -6,10 +6,10 @@ def add_new_distributor(program_data, update_screen):
     """
     This function makes a window with geometry to center the window in the middle when it opens.
     The window is not resizable
-    You can write distributor distributor_name and their phone number, and then you can press the ADD button to save
+    You can write distributor name , and then you can press the ADD button to save
     the changes.
-    If the information you filled is unique, then the changes will be applied.
-    The ADD button sends the entry from entry_text and entry_phone_number to function named "look_through_json"
+    If the information you filled is unique, then the distributor will be added.
+    The ADD button sends the entry from user, program_data and update_screen to function named "look_through_json"
     """
     distributor_add_window = Tk()
     distributor_add_window.title("Add")
@@ -20,16 +20,15 @@ def add_new_distributor(program_data, update_screen):
     title_name.pack()
     entry_text.pack()
     Button(distributor_add_window, text='ADD', bd=3, font='Arial 15', bg='light green',
-           command=lambda: look_through_json(entry_text, distributor_add_window, program_data, update_screen)).pack()
+           command=lambda: check_for_existence(entry_text, distributor_add_window, program_data, update_screen)).pack()
 
 
-def look_through_json(distributor_name, add_info_window, program_data, refresh_screen):
+def check_for_existence(distributor_name, add_info_window, program_data, refresh_screen):
     """
-    Parameter distributor_name and phone_number is taken after the ADD button is clicked.
-    Checking if distributor_name and phone_number are not empty.
-    Adding the distributor distributor_name to the json file if it is unique which means it doesn't exist , so is the
-    phone number. If the distributor_name exists, but new phone number is added which must be unique,
-    the phone number is saved.                     NEED TO CHANGE DOC STRING
+    Parameter distributor_name is taken after the ADD button is clicked, and it's first letter is capitalized.
+    Checking if distributor_name is not empty.
+    Adding the distributor to the json file if it is unique which means it doesn't exist.
+    If the distributor does not exist, then a special message box will pop on the screen.
     """
     distributor_name = distributor_name.get().capitalize()
     if distributor_name:
@@ -41,6 +40,3 @@ def look_through_json(distributor_name, add_info_window, program_data, refresh_s
         messagebox.showinfo("Error", "Please fill in a distributor name.")
     add_info_window.destroy()
     refresh_screen()
-
-
-
