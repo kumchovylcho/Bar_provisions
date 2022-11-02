@@ -39,8 +39,9 @@ def update_distributors():
     else:
         showing_all_distributors.insert('1.0', "There are currently no distributors.")
     showing_all_distributors.pack(side=LEFT, fill=BOTH)
-    scrollbar.config(command=showing_all_distributors.yview())
+    scrollbar.config(command=showing_all_distributors.yview)
     showing_all_distributors.config(state=DISABLED, pady=3)
+
 
 
 def update_products():
