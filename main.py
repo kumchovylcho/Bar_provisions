@@ -17,11 +17,11 @@ def update_distributors():
     The text is positioned on the left side of the frame and made the text non-deletable(read-only), but can be copied
     with ctrl + C.
     """
-    text_box = Frame(window_frame, width=67, height=29, bg='powder blue')
-    text_box.place(x=230, y=80)
-    scrollbar = Scrollbar(text_box)
+    distributors_show_info = Frame(window_frame, width=67, height=29, bg='#F4F3F1')
+    distributors_show_info.place(x=230, y=80)
+    scrollbar = Scrollbar(distributors_show_info)
     scrollbar.pack(side=RIGHT, fill=Y)
-    showing_all_distributors = Text(text_box, width=37, height=17, bg='powder blue', font='Arial 17',
+    showing_all_distributors = Text(distributors_show_info, width=37, height=17, bg='#F4F3F1', font='Arial 17 bold',
                                     yscrollcommand=scrollbar.set)
     if program_data["distributors"]:
         for name in sorted(program_data["distributors"]):
@@ -37,10 +37,37 @@ def update_distributors():
                 showing_all_distributors.insert(END, phone_numbers)
 
     else:
-        showing_all_distributors.insert('1.0', "There are no current distributors.")
+        showing_all_distributors.insert('1.0', "There are currently no distributors.")
     showing_all_distributors.pack(side=LEFT, fill=BOTH)
     scrollbar.config(command=showing_all_distributors.yview())
     showing_all_distributors.config(state=DISABLED, pady=3)
+
+
+def update_products():
+    products_show_info = Frame(window_frame, width=67, height=29, bg='#F4F3F1')
+    products_show_info.place(x=230, y=80)
+    scrollbar = Scrollbar(products_show_info)
+    scrollbar.pack(side=RIGHT, fill=Y)
+    show_all_products = Text(products_show_info, width=37, height=17, bg='#F4F3F1', font='Arial 17 bold',
+                             yscrollcommand=scrollbar.set)
+    if program_data["products"]:
+        for item in sorted(program_data["products"]):
+            show_info = f"{item}:\n"
+            show_all_products.insert(END, show_info)
+            if not program_data['products']:
+                items = f"{4 * ' '}phone numbers:{2 * ' '}" \
+                        f"None\n\n"
+                show_all_products.insert(END, items)
+            elif program_data['products']:
+                items = f"{4 * ' '}phone numbers:{2 * ' '}" \
+                        f"{', '.join(program_data['products'])}\n\n"
+                show_all_products.insert(END, items)
+
+    else:
+        show_all_products.insert('1.0', "Currently there aren't any products. You must add them manually.")
+    show_all_products.pack(side=LEFT, fill=BOTH)
+    scrollbar.config(command=show_all_products.yview())
+    show_all_products.config(state=DISABLED, pady=3)
 
 
 window_frame = Tk()
@@ -57,42 +84,40 @@ window_frame.geometry(f"{app_width}x{app_height}+{centering_width}+{centering_he
 # program distributor_name
 window_frame.title('Bar-Manager')
 # background color of main window
-window_frame.configure(bg='#C1C1FF')
+window_frame.configure(bg='#A49E97')
 
 # adding a frame in the middle of screen to show result of buttons
-frame_window = Frame(window_frame, width=app_width // 2, height=450, bg='powder blue')
+frame_window = Frame(window_frame, width=app_width // 2, height=450, bg='#F4F3F1')
 frame_window.place(x=230, y=80)
 
 
-distributors = Button(window_frame, text='Distributors', bd=3, font='Arial 18', width=12, command=update_distributors)
+distributors = Button(window_frame, text='Distributors', bd=3, font='Arial 18 bold', width=12,
+                      command=update_distributors)
 distributors.place(x=0, y=0)
 
 
-add_extra_distributors = Button(window_frame, text='Add Distributor', bd=3, font='Arial 11', bg='light green',
-                                width=15, command=lambda: add_new_distributor(program_data, update_distributors))
-add_extra_distributors.place(x=-1, y=48)
+add_extra_distributors = Button(window_frame, text='Add Distributor', bd=3, font='Arial 11 bold', bg='#40FA5A',
+                                width=17, command=lambda: add_new_distributor(program_data, update_distributors))
+add_extra_distributors.place(x=-1, y=50)
 
 
-remove_distributor = Button(window_frame, text='Remove Distributor', font='Arial 10', bd=3, width=17,
+remove_distributor = Button(window_frame, text='Remove Distributor', font='Arial 11 bold', bd=3, width=17,
                             bg='red', command=lambda: delete_distributor(program_data, update_distributors))
-remove_distributor.place(x=-2, y=140)
+remove_distributor.place(x=-1, y=142)
 
 
-add_phone_number = Button(window_frame, text='Add phone-number', bd=3, font='Arial 11',
-                          width=15, command=lambda: add_new_phone_number(program_data, update_distributors))
-add_phone_number.place(x=-1, y=79)
+add_phone_number = Button(window_frame, text='Add phone-number', bd=3, font='Arial 11 bold',
+                          width=17, command=lambda: add_new_phone_number(program_data, update_distributors))
+add_phone_number.place(x=-1, y=81)
 
 
-remove_phone_number = Button(window_frame, text='Remove phone-number', bd=3, font='Arial 10',
-                             width=17, command=lambda: delete_phone_number(program_data, update_distributors))
-remove_phone_number.place(x=-2, y=109)
+remove_phone_number = Button(window_frame, text='Remove phone-number', bd=3, font='Arial 10 bold',
+                             width=19, command=lambda: delete_phone_number(program_data, update_distributors))
+remove_phone_number.place(x=0, y=113)
 
 
-# # products button
-# products = Button(window_frame, text='Products', width=14, bd=3, font='Arial 16',
-#                   command=lambda: update_products(window_frame))
-# # products button position
-# products.place(x=0, y=170)
+products = Button(window_frame, text='Products', width=14, bd=3, font='Arial 16 bold', command=update_products)
+products.place(x=0, y=170)
 
 
 program_data = read_json()
