@@ -4,18 +4,18 @@ from tkinter import messagebox
 
 def delete_distributor(program_data, update_distributors):
     """
-    Made a window which you can enter a distributor name which you want to delete.
+    Made a window where you can enter a distributor name which you want to delete.
     After the DELETE button is pressed , the entry from what user has typed is send to ~delete_confirmation~ function.
     """
     remove_distributor_window = Tk()
     remove_distributor_window.title("Delete")
     remove_distributor_window.geometry('250x160+800+400')
     remove_distributor_window.resizable(False, False)
-    distributor_to_be_deleted = Label(remove_distributor_window, text='Delete Distributor', font='Arial 18')
-    user_input = Entry(remove_distributor_window, bg='powder blue', font='Arial 24')
+    distributor_to_be_deleted = Label(remove_distributor_window, text='Delete Distributor', font='Arial 18 bold')
+    user_input = Entry(remove_distributor_window, bg='powder blue', font='Arial 24 bold')
     distributor_to_be_deleted.pack()
     user_input.pack()
-    delete_distributor_button = Button(remove_distributor_window, font='Arial 20', bg='red', text='DELETE',
+    delete_distributor_button = Button(remove_distributor_window, font='Arial 20 bold', bg='red', text='DELETE',
                                        command=lambda: delete_distributor_confirmation(user_input,
                                                                                        remove_distributor_window,
                                                                                        program_data,
