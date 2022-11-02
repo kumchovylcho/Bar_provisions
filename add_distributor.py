@@ -9,17 +9,17 @@ def add_new_distributor(program_data, update_screen):
     You can write distributor name , and then you can press the ADD button to save
     the changes.
     If the information you filled is unique, then the distributor will be added.
-    The ADD button sends the entry from user, program_data and update_screen to function named "look_through_json"
+    The ADD button sends the entry from the user, program_data and update_screen to function named "look_through_json"
     """
     distributor_add_window = Tk()
     distributor_add_window.title("Add")
     distributor_add_window.geometry('250x150+800+400')
     distributor_add_window.resizable(False, False)
-    title_name = Label(distributor_add_window, bd=3, text='Distributor', font='Arial 15')
-    entry_text = Entry(distributor_add_window, bd=3, width=50, bg='powder blue', font='Arial 30')
+    title_name = Label(distributor_add_window, bd=3, text='Distributor', font='Arial 15 bold')
+    entry_text = Entry(distributor_add_window, bd=3, width=50, bg='powder blue', font='Arial 30 bold')
     title_name.pack()
     entry_text.pack()
-    Button(distributor_add_window, text='ADD', bd=3, font='Arial 15', bg='light green',
+    Button(distributor_add_window, text='ADD', bd=3, font='Arial 15 bold', bg='#40FA5A',
            command=lambda: check_for_existence(entry_text, distributor_add_window, program_data, update_screen)).pack()
 
 
