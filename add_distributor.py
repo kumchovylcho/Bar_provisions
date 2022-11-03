@@ -35,7 +35,9 @@ def check_for_existence(distributor_name, add_info_window, program_data, refresh
         if distributor_name not in program_data["distributors"]:
             program_data["distributors"][distributor_name] = distributor_name
             program_data["distributors"][distributor_name] = {"phone_numbers": []}
-            messagebox.showinfo('Added', f'{distributor_name} distributor has been added to the data base.')
+            messagebox.showinfo('Added', f'{distributor_name} distributor has been added to the database.')
+        elif distributor_name in program_data['distributors']:
+            messagebox.showerror('Error', f"{distributor_name} is already in the database.")
     elif not distributor_name:
         messagebox.showinfo("Error", "Please fill in a distributor name.")
     add_info_window.destroy()
