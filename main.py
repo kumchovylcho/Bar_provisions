@@ -3,6 +3,7 @@ from add_distributor import *
 from delete_distributor import *
 from delete_phone_number import *
 from add_phone_number import *
+from add_product import *
 from tkinter import *
 
 
@@ -16,7 +17,11 @@ def update_distributors():
     Showing all distributors and their phone numbers on screen with a single for loop.
     The text is positioned on the left side of the frame and made the text non-deletable(read-only), but can be copied
     with ctrl + C.
+    Added counter of distributors which is placed in the top left corner of the Text frame.
     """
+    counter_of_distributors = Label(window_frame, text=f"Total distributors: {len(program_data['distributors'])}",
+                                    font='Arial 15 bold', bg='#A49E97')
+    counter_of_distributors.place(x=232, y=50)
     distributors_show_info = Frame(window_frame, width=67, height=29, bg='#F4F3F1')
     distributors_show_info.place(x=230, y=80)
     scrollbar = Scrollbar(distributors_show_info)
@@ -41,7 +46,6 @@ def update_distributors():
     showing_all_distributors.pack(side=LEFT, fill=BOTH)
     scrollbar.config(command=showing_all_distributors.yview)
     showing_all_distributors.config(state=DISABLED, pady=3)
-
 
 
 def update_products():
@@ -91,35 +95,32 @@ window_frame.configure(bg='#A49E97')
 frame_window = Frame(window_frame, width=app_width // 2, height=450, bg='#F4F3F1')
 frame_window.place(x=230, y=80)
 
-
 distributors = Button(window_frame, text='Distributors', bd=3, font='Arial 18 bold', width=12,
                       command=update_distributors)
 distributors.place(x=0, y=0)
-
 
 add_extra_distributors = Button(window_frame, text='Add Distributor', bd=3, font='Arial 11 bold', bg='#40FA5A',
                                 width=17, command=lambda: add_new_distributor(program_data, update_distributors))
 add_extra_distributors.place(x=-1, y=50)
 
-
 remove_distributor = Button(window_frame, text='Remove Distributor', font='Arial 11 bold', bd=3, width=17,
                             bg='red', command=lambda: delete_distributor(program_data, update_distributors))
 remove_distributor.place(x=-1, y=142)
-
 
 add_phone_number = Button(window_frame, text='Add phone-number', bd=3, font='Arial 11 bold',
                           width=17, command=lambda: add_new_phone_number(program_data, update_distributors))
 add_phone_number.place(x=-1, y=81)
 
-
 remove_phone_number = Button(window_frame, text='Remove phone-number', bd=3, font='Arial 10 bold',
                              width=19, command=lambda: delete_phone_number(program_data, update_distributors))
 remove_phone_number.place(x=0, y=113)
 
-
 products = Button(window_frame, text='Products', width=14, bd=3, font='Arial 16 bold', command=update_products)
 products.place(x=0, y=170)
 
+add_product = Button(window_frame, text='Add Product', bd=3, font='Arial 16 bold', bg='#40FA5A',
+                     command=lambda: add_products(program_data, update_products))
+add_product.place(x=0, y=220)
 
 program_data = read_json()
 window_frame.mainloop()
