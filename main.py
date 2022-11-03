@@ -8,6 +8,7 @@ from tkinter import *
 
 
 def update_distributors():
+    global counter_of_distributors_and_products
     """
     Making a frame to use its parameters so the Text box can be positioned and the scrollbar can be added to the frame.
     The scrollbar is set to be on the right side of the text and set to be vertical.
@@ -19,9 +20,8 @@ def update_distributors():
     with ctrl + C.
     Added counter of distributors which is placed in the top left corner of the Text frame.
     """
-    counter_of_distributors = Label(window_frame, text=f"Total distributors: {len(program_data['distributors'])}",
-                                    font='Arial 15 bold', bg='#A49E97')
-    counter_of_distributors.place(x=232, y=50)
+
+    counter_of_distributors_and_products['text'] = f"Total distributors: {len(program_data['distributors'])}"
     distributors_show_info = Frame(window_frame, width=67, height=29, bg='#F4F3F1')
     distributors_show_info.place(x=230, y=80)
     scrollbar = Scrollbar(distributors_show_info)
@@ -49,6 +49,8 @@ def update_distributors():
 
 
 def update_products():
+    global counter_of_distributors_and_products
+    counter_of_distributors_and_products['text'] = f"Total unique products: {len(program_data['products'])}"
     products_show_info = Frame(window_frame, width=67, height=29, bg='#F4F3F1')
     products_show_info.place(x=230, y=80)
     scrollbar = Scrollbar(products_show_info)
@@ -115,7 +117,14 @@ remove_phone_number = Button(window_frame, text='Remove phone-number', bd=3, fon
                              width=19, command=lambda: delete_phone_number(program_data, update_distributors))
 remove_phone_number.place(x=0, y=113)
 
-products = Button(window_frame, text='Products', width=14, bd=3, font='Arial 16 bold', command=update_products)
+counter_of_distributors_and_products = Label(window_frame,
+                                             text='',
+                                             font='Arial 15 bold', bg='#A49E97')
+counter_of_distributors_and_products.place(x=232, y=50)
+
+
+products = Button(window_frame, text='Products', width=14, bd=3, font='Arial 16 bold',
+                  command=update_products)
 products.place(x=0, y=170)
 
 add_product = Button(window_frame, text='Add Product', bd=3, font='Arial 16 bold', bg='#40FA5A',
