@@ -18,5 +18,9 @@ def save_on_close(program_data):
 
 app_information = {
     "distributors": {},
-    "products": {}
+    "products": {
+        "food": {},  # group 1
+        'drinks': {},  # group 2
+        'alcohol': {}   # group 3
+    }
 }
