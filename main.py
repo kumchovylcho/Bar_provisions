@@ -4,6 +4,7 @@ from delete_distributor import *
 from delete_phone_number import *
 from add_phone_number import *
 from add_product import *
+from product_groups_info import *
 from tkinter import *
 
 
@@ -20,7 +21,6 @@ def update_distributors():
     with ctrl + C.
     Added counter of distributors which is placed in the top left corner of the Text frame.
     """
-
     counter_of_distributors_and_products['text'] = f"Total distributors: {len(program_data['distributors'])}"
     distributors_show_info = Frame(window_frame, width=67, height=29, bg='#F4F3F1')
     distributors_show_info.place(x=230, y=80)
@@ -29,19 +29,19 @@ def update_distributors():
     showing_all_distributors = Text(distributors_show_info, width=37, height=17, bg='#F4F3F1', font='Arial 17 bold',
                                     yscrollcommand=scrollbar.set)
     if program_data["distributors"]:
+        indent, indent_after_phone_numbers = 4 * ' ', 2 * ' '
         for name in sorted(program_data["distributors"]):
             show_info = f"{name}:\n"
             showing_all_distributors.insert(END, show_info)
             if not program_data['distributors'][name]['phone_numbers']:
-                phone_numbers = f"{4 * ' '}phone numbers:{2 * ' '}" \
+                phone_numbers = f"{indent}phone numbers:{indent_after_phone_numbers}" \
                                 f"None\n\n"
                 showing_all_distributors.insert(END, phone_numbers)
             elif program_data['distributors'][name]['phone_numbers']:
-                phone_numbers = f"{4 * ' '}phone numbers:{2 * ' '}" \
+                phone_numbers = f"{indent}phone numbers:{indent_after_phone_numbers}" \
                                 f"{', '.join(program_data['distributors'][name]['phone_numbers'])}\n\n"
                 showing_all_distributors.insert(END, phone_numbers)
-
-    else:
+    elif not program_data['distributors']:
         showing_all_distributors.insert('1.0', "There are currently no distributors.")
     showing_all_distributors.pack(side=LEFT, fill=BOTH)
     scrollbar.config(command=showing_all_distributors.yview)
@@ -49,28 +49,52 @@ def update_distributors():
 
 
 def update_products():
+    """
+    This function shows all products with their quantities and prices.
+    It has a product counter above the frame.
+    None message will appear beside the product group if there isn't any product in that group.
+    If there are no products at all, then a message will appear in the text frame.
+    """
     global counter_of_distributors_and_products
-    counter_of_distributors_and_products['text'] = f"Total unique products: {len(program_data['products'])}"
+    total_products = len(program_data['products']['food']) + len(program_data['products']['drinks']) + \
+                     len(program_data['products']['alcohol'])
+    counter_of_distributors_and_products['text'] = f"Total unique products: {total_products}"
     products_show_info = Frame(window_frame, width=67, height=29, bg='#F4F3F1')
     products_show_info.place(x=230, y=80)
     scrollbar = Scrollbar(products_show_info)
     scrollbar.pack(side=RIGHT, fill=Y)
     show_all_products = Text(products_show_info, width=37, height=17, bg='#F4F3F1', font='Arial 17 bold',
                              yscrollcommand=scrollbar.set)
-    if program_data["products"]:
-        for item in sorted(program_data["products"]):
-            show_info = f"{item}:\n"
-            show_all_products.insert(END, show_info)
-            if not program_data['products']:
-                items = f"{4 * ' '}phone numbers:{2 * ' '}" \
-                        f"None\n\n"
-                show_all_products.insert(END, items)
-            elif program_data['products']:
-                items = f"{4 * ' '}phone numbers:{2 * ' '}" \
-                        f"{', '.join(program_data['products'])}\n\n"
-                show_all_products.insert(END, items)
-
+    integrate = 5 * ' '
+    if program_data["products"]['food']:
+        show_all_products.insert(END, f"Food:\n")
+        for item in sorted(program_data["products"]['food']):
+            show_food = f"{integrate}{item}:\n" \
+                        f"{integrate * 2}quantity: {program_data['products']['food'][item]['quantity']}, " \
+                        f"price: {program_data['products']['food'][item]['price']}"
+            show_all_products.insert(END, f"{show_food}\n")
     else:
+        show_all_products.insert(END, f"\nFood: None\n")
+    if program_data['products']['drinks']:
+        show_all_products.insert(END, f"\nDrinks:\n")
+        for drink in sorted(program_data['products']['drinks']):
+            show_drinks = f"{integrate}{drink}:\n" \
+                          f"{integrate * 2}quantity: {program_data['products']['drinks'][drink]['quantity']}, " \
+                          f"price: {program_data['products']['drinks'][drink]['price']}"
+            show_all_products.insert(END, f"{show_drinks}\n")
+    else:
+        show_all_products.insert(END, f"\nDrinks: None\n")
+    if program_data['products']['alcohol']:
+        show_all_products.insert(END, f"\nAlcohol:\n")
+        for alcohol in sorted(program_data['products']['alcohol']):
+            show_alcohol = f"{integrate}{alcohol}:\n" \
+                           f"{integrate * 2}quantity: {program_data['products']['alcohol'][alcohol]['quantity']}, " \
+                           f"price: {program_data['products']['alcohol'][alcohol]['price']}"
+            show_all_products.insert(END, f"{show_alcohol}\n")
+    else:
+        show_all_products.insert(END, f"Alcohol: None\n")
+    if not program_data['products']['food'] and not program_data['products']['drinks'] \
+            and not program_data['products']['alcohol']:
         show_all_products.insert('1.0', "Currently there aren't any products. You must add them manually.")
     show_all_products.pack(side=LEFT, fill=BOTH)
     scrollbar.config(command=show_all_products.yview())
@@ -94,7 +118,7 @@ window_frame.title('Bar-Manager')
 window_frame.configure(bg='#A49E97')
 
 # adding a frame in the middle of screen to show result of buttons
-frame_window = Frame(window_frame, width=app_width // 2, height=450, bg='#F4F3F1')
+frame_window = Frame(window_frame, width=app_width // 2, height=467, bg='#F4F3F1')
 frame_window.place(x=230, y=80)
 
 distributors = Button(window_frame, text='Distributors', bd=3, font='Arial 18 bold', width=12,
@@ -122,14 +146,18 @@ counter_of_distributors_and_products = Label(window_frame,
                                              font='Arial 15 bold', bg='#A49E97')
 counter_of_distributors_and_products.place(x=232, y=50)
 
-
 products = Button(window_frame, text='Products', width=14, bd=3, font='Arial 16 bold',
                   command=update_products)
 products.place(x=0, y=170)
 
 add_product = Button(window_frame, text='Add Product', bd=3, font='Arial 16 bold', bg='#40FA5A',
-                     command=lambda: add_products(program_data, update_products))
-add_product.place(x=0, y=220)
+                     command=lambda: add_new_product(program_data, update_products))
+add_product.place(x=0, y=213)
+
+products_information = Button(window_frame, text='Product groups info', bd=3, font='Arial 15 bold',
+                              command=lambda: show_products_information(window_frame,
+                                                                        counter_of_distributors_and_products))
+products_information.place(x=0, y=560)
 
 program_data = read_json()
 window_frame.mainloop()
