@@ -74,7 +74,7 @@ def update_products():
                         f"price: {program_data['products']['food'][item]['price']}"
             show_all_products.insert(END, f"{show_food}\n")
     else:
-        show_all_products.insert(END, f"\nFood: None\n")
+        show_all_products.insert(END, f"\nFood: None")
     if program_data['products']['drinks']:
         show_all_products.insert(END, f"\nDrinks:\n")
         for drink in sorted(program_data['products']['drinks']):
