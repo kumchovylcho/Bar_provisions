@@ -97,7 +97,7 @@ def update_products():
             and not program_data['products']['alcohol']:
         show_all_products.insert('1.0', "Currently there aren't any products. You must add them manually.")
     show_all_products.pack(side=LEFT, fill=BOTH)
-    scrollbar.config(command=show_all_products.yview())
+    scrollbar.config(command=show_all_products.yview)
     show_all_products.config(state=DISABLED, pady=3)
 
 
