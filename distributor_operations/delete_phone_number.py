@@ -1,8 +1,24 @@
 from tkinter import *
 from tkinter import messagebox
 
+limit_of_windows = 1
+
+
+def ask_to_close_window(window):
+    """
+    param window: Is the window that will be closed if the user selects yes on the message box.
+    This function checks if the user tries to close the window with X button or alt-f4.
+    The only way to close the window is selecting yes from the message box or going through the steps of the button.
+    """
+    global limit_of_windows
+    question = messagebox.askokcancel('Confirm', 'Do you want to close the window ?')
+    if question:
+        limit_of_windows -= 1
+        window.destroy()
+
 
 def delete_phone_number(program_data, update_distributors):
+    global limit_of_windows
     """
     param program_data: Is the information that json file holds.
     param update_distributors: is a function which updates the screen after every distributor related button
@@ -11,28 +27,33 @@ def delete_phone_number(program_data, update_distributors):
     You must fill both entries and click the ADD button and then the information you filled in is sent to a function
     named delete_phone_validation.
     """
-    remove_phone = Tk()
-    remove_phone.title("Remove phone")
-    remove_phone.geometry('250x230+800+400')
-    remove_phone.resizable(False, False)
-    Label(remove_phone, bd=3, text='Write the phone number', font='Arial 14 bold').pack()
+    if limit_of_windows < 2:
+        limit_of_windows += 1
+        remove_phone = Tk()
+        remove_phone.title("Remove phone")
+        remove_phone.geometry('250x230+800+400')
+        remove_phone.resizable(False, False)
+        remove_phone.config(bg='#A49E97')
+        Label(remove_phone, bd=3, text='Write the phone number', font='Arial 14 bold', bg='#FFCCA7', width=20).pack()
 
-    entry_number = Entry(remove_phone, bd=3, width=50, bg='powder blue', font='Arial 30 bold')
-    entry_number.pack()
+        entry_number = Entry(remove_phone, bd=3, width=50, bg='powder blue', font='Arial 30 bold')
+        entry_number.pack()
 
-    Label(remove_phone, bd=3, text='Remove from "distributor"', font='Arial 14 bold').pack()
+        Label(remove_phone, bd=3, text='Remove from "distributor"', font='Arial 14 bold', bg='#FFCCA7', width=20).pack()
 
-    entry_distributor = Entry(remove_phone, bd=3, width=50, bg='powder blue', font='Arial 30 bold')
-    entry_distributor.pack()
+        entry_distributor = Entry(remove_phone, bd=3, width=50, bg='powder blue', font='Arial 30 bold')
+        entry_distributor.pack()
 
-    add_button = Button(remove_phone, bd=3, bg='red',
-                        font='Arial 20 bold', text='REMOVE',
-                        command=lambda: delete_phone_validation(remove_phone, entry_number, entry_distributor,
-                                                                program_data, update_distributors))
-    add_button.pack()
+        add_button = Button(remove_phone, bd=3, bg='red',
+                            font='Arial 20 bold', text='REMOVE',
+                            command=lambda: delete_phone_validation(remove_phone, entry_number, entry_distributor,
+                                                                    program_data, update_distributors))
+        add_button.pack()
+        remove_phone.protocol('WM_DELETE_WINDOW', lambda: ask_to_close_window(remove_phone))
 
 
 def delete_phone_validation(window, phone, distributor, program_data, update_distributors):
+    global limit_of_windows
     """
     param window: Is the window that has been made in function delete_phone_number which will be closed after the
     if statements.
@@ -64,5 +85,8 @@ def delete_phone_validation(window, phone, distributor, program_data, update_dis
             messagebox.showerror("Error", f"Phone number: {phone} does not exist in {distributor} distributor.")
         elif distributor not in program_data['distributors']:
             messagebox.showerror("Error", f"Distributor: {distributor} does not exist in data base.")
+    elif not phone or not distributor:
+        messagebox.showinfo("Invalid", "I can't work with empty blanks.")
     window.destroy()
+    limit_of_windows -= 1
     update_distributors()

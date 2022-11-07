@@ -1,10 +1,11 @@
 from read_json import *
-from add_distributor import *
-from delete_distributor import *
-from delete_phone_number import *
-from add_phone_number import *
-from add_product import *
-from product_groups_info import *
+from distributor_operations.add_distributor import *
+from distributor_operations.delete_distributor import *
+from distributor_operations.delete_phone_number import *
+from distributor_operations.add_phone_number import *
+from product_operations.add_product import *
+from product_operations.product_groups_info import *
+from product_operations.add_quantity_to_product import *
 from tkinter import *
 
 
@@ -70,8 +71,8 @@ def update_products():
         show_all_products.insert(END, f"Food:\n")
         for item in sorted(program_data["products"]['food']):
             show_food = f"{integrate}{item}:\n" \
-                        f"{integrate * 2}quantity: {program_data['products']['food'][item]['quantity']}, " \
-                        f"price: {program_data['products']['food'][item]['price']}"
+                        f"{integrate * 2}quantity: {program_data['products']['food'][item]['quantity']:.0f}, " \
+                        f"price: {program_data['products']['food'][item]['price']:.2f}"
             show_all_products.insert(END, f"{show_food}\n")
     else:
         show_all_products.insert(END, f"\nFood: None")
@@ -79,8 +80,8 @@ def update_products():
         show_all_products.insert(END, f"\nDrinks:\n")
         for drink in sorted(program_data['products']['drinks']):
             show_drinks = f"{integrate}{drink}:\n" \
-                          f"{integrate * 2}quantity: {program_data['products']['drinks'][drink]['quantity']}, " \
-                          f"price: {program_data['products']['drinks'][drink]['price']}"
+                          f"{integrate * 2}quantity: {program_data['products']['drinks'][drink]['quantity']:.0f}, " \
+                          f"price: {program_data['products']['drinks'][drink]['price']:.2f}"
             show_all_products.insert(END, f"{show_drinks}\n")
     else:
         show_all_products.insert(END, f"\nDrinks: None\n")
@@ -88,8 +89,8 @@ def update_products():
         show_all_products.insert(END, f"\nAlcohol:\n")
         for alcohol in sorted(program_data['products']['alcohol']):
             show_alcohol = f"{integrate}{alcohol}:\n" \
-                           f"{integrate * 2}quantity: {program_data['products']['alcohol'][alcohol]['quantity']}, " \
-                           f"price: {program_data['products']['alcohol'][alcohol]['price']}"
+                           f"{integrate * 2}quantity: {program_data['products']['alcohol'][alcohol]['quantity']:.0f}, "\
+                           f"price: {program_data['products']['alcohol'][alcohol]['price']:.2f}"
             show_all_products.insert(END, f"{show_alcohol}\n")
     else:
         show_all_products.insert(END, f"Alcohol: None\n")
@@ -123,37 +124,36 @@ frame_window.place(x=230, y=80)
 
 distributors = Button(window_frame, text='Distributors', bd=3, font='Arial 18 bold', width=12,
                       command=update_distributors)
-distributors.place(x=0, y=0)
-
+distributors.place(x=810, y=0)
 add_extra_distributors = Button(window_frame, text='Add Distributor', bd=3, font='Arial 11 bold', bg='#40FA5A',
                                 width=17, command=lambda: add_new_distributor(program_data, update_distributors))
-add_extra_distributors.place(x=-1, y=50)
-
+add_extra_distributors.place(x=837, y=52)
 remove_distributor = Button(window_frame, text='Remove Distributor', font='Arial 11 bold', bd=3, width=17,
                             bg='red', command=lambda: delete_distributor(program_data, update_distributors))
-remove_distributor.place(x=-1, y=142)
-
+remove_distributor.place(x=837, y=145)
 add_phone_number = Button(window_frame, text='Add phone-number', bd=3, font='Arial 11 bold',
                           width=17, command=lambda: add_new_phone_number(program_data, update_distributors))
-add_phone_number.place(x=-1, y=81)
-
+add_phone_number.place(x=837, y=84)
 remove_phone_number = Button(window_frame, text='Remove phone-number', bd=3, font='Arial 10 bold',
                              width=19, command=lambda: delete_phone_number(program_data, update_distributors))
-remove_phone_number.place(x=0, y=113)
+remove_phone_number.place(x=837, y=117)
 
-counter_of_distributors_and_products = Label(window_frame,
-                                             text='',
-                                             font='Arial 15 bold', bg='#A49E97')
+counter_of_distributors_and_products = Label(window_frame, text='', font='Arial 15 bold', bg='#A49E97')
 counter_of_distributors_and_products.place(x=232, y=50)
-
-products = Button(window_frame, text='Products', width=14, bd=3, font='Arial 16 bold',
-                  command=update_products)
-products.place(x=0, y=170)
-
-add_product = Button(window_frame, text='Add Product', bd=3, font='Arial 16 bold', bg='#40FA5A',
+products = Button(window_frame, text='Products', width=14, bd=3, font='Arial 16 bold', command=update_products)
+products.place(x=0, y=0)
+add_product = Button(window_frame, text='Add Product', bd=3, font='Arial 14 bold', bg='#40FA5A', width=13,
                      command=lambda: add_new_product(program_data, update_products))
-add_product.place(x=0, y=213)
-
+add_product.place(x=0, y=42)
+add_quantity_button = Button(window_frame, text='Add quantity', bd=3, font='Arial 14 bold', width=13,
+                             command=lambda: add_quantity(program_data, update_products))
+add_quantity_button.place(x=0, y=82)
+remove_quantity = Button(window_frame, text='Remove quantity', bd=3, font='Arial 14 bold', width=13)
+remove_quantity.place(x=0, y=122)
+change_price = Button(window_frame, text='Change price', bd=3, font='Arial 14 bold', width=13)
+change_price.place(x=0, y=162)
+remove_product = Button(window_frame, text='Remove product', bd=3, font='Arial 14 bold', bg='red', width=13)
+remove_product.place(x=0, y=202)
 products_information = Button(window_frame, text='Product groups info', bd=3, font='Arial 15 bold',
                               command=lambda: show_products_information(window_frame,
                                                                         counter_of_distributors_and_products))
