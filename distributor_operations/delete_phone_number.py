@@ -1,24 +1,11 @@
 from tkinter import *
+from extra_options.state_of_button import check_state_of_button
+from extra_options.limit_of_windows import *
 from tkinter import messagebox
-
-limit_of_windows = 1
-
-
-def ask_to_close_window(window):
-    """
-    param window: Is the window that will be closed if the user selects yes on the message box.
-    This function checks if the user tries to close the window with X button or alt-f4.
-    The only way to close the window is selecting yes from the message box or going through the steps of the button.
-    """
-    global limit_of_windows
-    question = messagebox.askokcancel('Confirm', 'Do you want to close the window ?')
-    if question:
-        limit_of_windows -= 1
-        window.destroy()
 
 
 def delete_phone_number(program_data, update_distributors):
-    global limit_of_windows
+
     """
     param program_data: Is the information that json file holds.
     param update_distributors: is a function which updates the screen after every distributor related button
@@ -27,8 +14,7 @@ def delete_phone_number(program_data, update_distributors):
     You must fill both entries and click the ADD button and then the information you filled in is sent to a function
     named delete_phone_validation.
     """
-    if limit_of_windows < 2:
-        limit_of_windows += 1
+    if check_if_opened():
         remove_phone = Tk()
         remove_phone.title("Remove phone")
         remove_phone.geometry('250x230+800+400')
@@ -44,16 +30,22 @@ def delete_phone_number(program_data, update_distributors):
         entry_distributor = Entry(remove_phone, bd=3, width=50, bg='powder blue', font='Arial 30 bold')
         entry_distributor.pack()
 
-        add_button = Button(remove_phone, bd=3, bg='red',
-                            font='Arial 20 bold', text='REMOVE',
-                            command=lambda: delete_phone_validation(remove_phone, entry_number, entry_distributor,
-                                                                    program_data, update_distributors))
-        add_button.pack()
+        delete_button = Button(remove_phone, bd=3, bg='grey', state='disabled',
+                               font='Arial 20 bold', text='REMOVE',
+                               command=lambda: delete_phone_validation(remove_phone, entry_number, entry_distributor,
+                                                                       program_data, update_distributors))
+        delete_button.pack()
         remove_phone.protocol('WM_DELETE_WINDOW', lambda: ask_to_close_window(remove_phone))
+        color_of_delete_button = 'red'
+        entry_number.bind('<KeyRelease>',
+                          lambda message: check_state_of_button(entry_number, entry_distributor, delete_button,
+                                                                color_of_delete_button))
+        entry_distributor.bind('<KeyRelease>',
+                               lambda message: check_state_of_button(entry_number, entry_distributor, delete_button,
+                                                                     color_of_delete_button))
 
 
 def delete_phone_validation(window, phone, distributor, program_data, update_distributors):
-    global limit_of_windows
     """
     param window: Is the window that has been made in function delete_phone_number which will be closed after the
     if statements.
@@ -71,22 +63,20 @@ def delete_phone_validation(window, phone, distributor, program_data, update_dis
     If the distributor user does not exist, then a message will pop up that shows an error.
     """
     phone, distributor = phone.get(), distributor.get().capitalize()
-    if phone and distributor:
-        if distributor in program_data['distributors'] and \
-                phone in program_data['distributors'][distributor]['phone_numbers']:
-            question = messagebox.askquestion("Delete", f"Do you really want to delete {phone}"
-                                                        f" number from {distributor} distributor?")
-            if question == 'yes':
-                program_data['distributors'][distributor]['phone_numbers'].remove(phone)
-                messagebox.showinfo("Information", f"Phone number: {phone} has been successfully removed from"
-                                                   f" {distributor} distributor.")
-        elif distributor in program_data['distributors'] and\
-                phone not in program_data['distributors'][distributor]['phone_numbers']:
-            messagebox.showerror("Error", f"Phone number: {phone} does not exist in {distributor} distributor.")
-        elif distributor not in program_data['distributors']:
-            messagebox.showerror("Error", f"Distributor: {distributor} does not exist in data base.")
-    elif not phone or not distributor:
-        messagebox.showinfo("Invalid", "I can't work with empty blanks.")
+    if distributor in program_data['distributors'] and \
+            phone in program_data['distributors'][distributor]['phone_numbers']:
+        question = messagebox.askquestion("Delete", f"Do you really want to delete {phone}"
+                                                    f" number from {distributor} distributor?")
+        if question == 'yes':
+            program_data['distributors'][distributor]['phone_numbers'].remove(phone)
+            messagebox.showinfo("Information", f"Phone number: {phone} has been successfully removed from"
+                                               f" {distributor} distributor.")
+    elif distributor in program_data['distributors'] and \
+            phone not in program_data['distributors'][distributor]['phone_numbers']:
+        messagebox.showerror("Error", f"Phone number: {phone} does not exist in {distributor} distributor.")
+    elif distributor not in program_data['distributors']:
+        messagebox.showerror("Error", f"Distributor: {distributor} does not exist in data base.")
     window.destroy()
-    limit_of_windows -= 1
+    # goes into limit_of_windows function
+    limit_of_windows['is opened'] = False
     update_distributors()

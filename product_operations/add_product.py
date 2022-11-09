@@ -1,24 +1,10 @@
 from tkinter import *
+from extra_options.state_of_button import check_state_of_button
+from extra_options.limit_of_windows import *
 from tkinter import messagebox
-
-limit_of_windows = 1
-
-
-def ask_to_close_window(window):
-    """
-    param window: Is the window that will be closed if the user selects yes on the message box.
-    This function checks if the user tries to close the window with X button or alt-f4.
-    The only way to close the window is selecting yes from the message box or going through the steps of the button.
-    """
-    global limit_of_windows
-    question = messagebox.askokcancel('Confirm', 'Do you want to close the window ?')
-    if question:
-        limit_of_windows -= 1
-        window.destroy()
 
 
 def add_new_product(program_data, update_products):
-    global limit_of_windows
     """
     param program_data: Is the information that json file holds.
     param update_products: Is a function which updates the screen after the ADD button is clicked, and it will be called
@@ -27,8 +13,7 @@ def add_new_product(program_data, update_products):
     There are 2 entries where the user can fill in the new product and the product group(where the product belongs to).
 
     """
-    if limit_of_windows < 2:
-        limit_of_windows += 1
+    if check_if_opened():
         add_product_window = Tk()
         add_product_window.title('Add Product')
         add_product_window.resizable(False, False)
@@ -41,14 +26,22 @@ def add_new_product(program_data, update_products):
         product_group = Entry(add_product_window, font='Arial 30 bold', bg='powder blue')
         product_group.pack()
         Label(add_product_window, text='Group 1: Food, Group 2: Drinks, Group 3: Alcohol', font='Arial 10 bold').pack()
-        Button(add_product_window, font='Arial 20 bold', text='ADD', bd=3, bg='#40FA5A',
-               command=lambda: product_validation(program_data, update_products, add_product_window, product_name,
-                                                  product_group)).pack()
+        add_button = Button(add_product_window, font='Arial 20 bold', text='ADD', bd=3, bg='grey', state='disabled',
+                            command=lambda: product_validation(program_data, update_products, add_product_window,
+                                                               product_name,
+                                                               product_group))
+        add_button.pack()
         add_product_window.protocol('WM_DELETE_WINDOW', lambda: ask_to_close_window(add_product_window))
+        color_of_add_button = '#40FA5A'
+        product_name.bind('<KeyRelease>',
+                          lambda message: check_state_of_button(product_name, product_group, add_button,
+                                                                color_of_add_button))
+        product_group.bind('<KeyRelease>',
+                           lambda message: check_state_of_button(product_name, product_group, add_button,
+                                                                 color_of_add_button))
 
 
 def product_validation(program_data, update_products, add_product_window, product_name, product_group):
-    global limit_of_windows
     """
     param program_data: Is the information that json file holds.
     param update_products: Is a function which updates the screen after the ADD button is clicked, and it will be called
@@ -64,48 +57,45 @@ def product_validation(program_data, update_products, add_product_window, produc
     """
     current_product, product_group = product_name.get().capitalize(), product_group.get()
     all_groups = ['1', '2', '3']
-    if current_product and product_group:
-        if product_group == '1':
-            if current_product not in program_data['products']['food'] and \
-                    current_product not in program_data['products']['drinks'] and \
-                    current_product not in program_data['products']['alcohol']:
-                program_data['products']['food'][current_product] = {'quantity': 0, 'price': 0}
-                messagebox.showinfo('Added', f"{current_product} has been added to the database.")
-            elif current_product in program_data['products']['drinks'] or \
-                    current_product in program_data['products']['alcohol']:
-                messagebox.showerror('Invalid', f"{current_product} already exists in other product group!")
-            elif current_product in program_data['products']['food']:
-                messagebox.showinfo('Invalid', f"{current_product} already exists!")
+    if product_group == '1':
+        if current_product not in program_data['products']['food'] and \
+                current_product not in program_data['products']['drinks'] and \
+                current_product not in program_data['products']['alcohol']:
+            program_data['products']['food'][current_product] = {'quantity': 0, 'price': 0}
+            messagebox.showinfo('Added', f"{current_product} has been added to the database.")
+        elif current_product in program_data['products']['drinks'] or \
+                current_product in program_data['products']['alcohol']:
+            messagebox.showerror('Invalid', f"{current_product} already exists in other product group!")
+        elif current_product in program_data['products']['food']:
+            messagebox.showinfo('Invalid', f"{current_product} already exists!")
 
-        elif product_group == '2':
-            if current_product not in program_data['products']['food'] and \
-                    current_product not in program_data['products']['drinks'] and \
-                    current_product not in program_data['products']['alcohol']:
-                program_data['products']['drinks'][current_product] = {'quantity': 0, 'price': 0}
-                messagebox.showinfo('Added', f"{current_product} has been added to the database.")
-            elif current_product in program_data['products']['food'] or \
-                    current_product in program_data['products']['alcohol']:
-                messagebox.showerror('Invalid', f"{current_product} already exists in other product group!")
-            elif current_product in program_data['products']['drinks']:
-                messagebox.showinfo('Invalid', f"{current_product} already exists!")
+    elif product_group == '2':
+        if current_product not in program_data['products']['food'] and \
+                current_product not in program_data['products']['drinks'] and \
+                current_product not in program_data['products']['alcohol']:
+            program_data['products']['drinks'][current_product] = {'quantity': 0, 'price': 0}
+            messagebox.showinfo('Added', f"{current_product} has been added to the database.")
+        elif current_product in program_data['products']['food'] or \
+                current_product in program_data['products']['alcohol']:
+            messagebox.showerror('Invalid', f"{current_product} already exists in other product group!")
+        elif current_product in program_data['products']['drinks']:
+            messagebox.showinfo('Invalid', f"{current_product} already exists!")
 
-        elif product_group == '3':
-            if current_product not in program_data['products']['food'] and \
-                    current_product not in program_data['products']['drinks'] and \
-                    current_product not in program_data['products']['alcohol']:
-                program_data['products']['alcohol'][current_product] = {'quantity': 0, 'price': 0}
-                messagebox.showinfo('Added', f"{current_product} has been added to the database.")
-            elif current_product in program_data['products']['food'] or \
-                    current_product in program_data['products']['drinks']:
-                messagebox.showerror('Invalid', f"{current_product} already exists in other product group!")
-            elif current_product in program_data['products']['alcohol']:
-                messagebox.showinfo('Invalid', f"{current_product} already exists!")
+    elif product_group == '3':
+        if current_product not in program_data['products']['food'] and \
+                current_product not in program_data['products']['drinks'] and \
+                current_product not in program_data['products']['alcohol']:
+            program_data['products']['alcohol'][current_product] = {'quantity': 0, 'price': 0}
+            messagebox.showinfo('Added', f"{current_product} has been added to the database.")
+        elif current_product in program_data['products']['food'] or \
+                current_product in program_data['products']['drinks']:
+            messagebox.showerror('Invalid', f"{current_product} already exists in other product group!")
+        elif current_product in program_data['products']['alcohol']:
+            messagebox.showinfo('Invalid', f"{current_product} already exists!")
 
-        elif product_group not in all_groups:
-            messagebox.showerror('Invalid', f"{product_group} is not a valid group! Please enter a valid group.")
-
-    elif not current_product or not product_group:
-        messagebox.showinfo('Not found', "I can't work with empty blanks.")
+    elif product_group not in all_groups:
+        messagebox.showerror('Invalid', f"{product_group} is not a valid group! Please enter a valid group.")
     add_product_window.destroy()
-    limit_of_windows -= 1
+    # goes into limit_of_windows function
+    limit_of_windows['is opened'] = False
     update_products()

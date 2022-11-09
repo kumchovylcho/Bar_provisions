@@ -1,31 +1,15 @@
 from tkinter import *
+from extra_options.state_of_button import check_state_of_button
+from extra_options.limit_of_windows import *
 from tkinter import messagebox
-from extra_options.detect_text import capture_text
-
-limit_of_windows = 1
-
-
-def ask_to_close_window(window):
-    """
-    param window: Is the window that will be closed if the user selects yes on the message box.
-    This function checks if the user tries to close the window with X button or alt-f4.
-    The only way to close the window is selecting yes from the message box or going through the steps of the button.
-    """
-    global limit_of_windows
-    question = messagebox.askokcancel('Confirm', 'Do you want to close the window ?')
-    if question:
-        limit_of_windows -= 1
-        window.destroy()
 
 
 def delete_distributor(program_data, update_distributors):
-    global limit_of_windows
     """
     Made a window where you can enter distributor name which you want to delete.
     After the DELETE button is pressed , the entry from what user has typed is send to ~delete_confirmation~ function.
     """
-    if limit_of_windows < 2:
-        limit_of_windows += 1
+    if check_if_opened():
         remove_distributor_window = Tk()
         remove_distributor_window.title("Delete")
         remove_distributor_window.geometry('250x170+800+400')
@@ -42,12 +26,12 @@ def delete_distributor(program_data, update_distributors):
                                                                                update_distributors))
         delete_button.pack()
         remove_distributor_window.protocol('WM_DELETE_WINDOW', lambda: ask_to_close_window(remove_distributor_window))
-        color_of_delete_button = 'grey'
-        user_input.bind('<KeyRelease>', lambda message: capture_text(user_input, delete_button, color_of_delete_button))
+        color_of_delete_button = 'red'
+        user_input.bind('<KeyRelease>', lambda message: check_state_of_button(user_input, delete_button,
+                                                                              color_of_delete_button))
 
 
 def delete_distributor_confirmation(distributor_check, delete_distri_window, program_data, update_distributors):
-    global limit_of_windows
     """
     param distributor_check: Is the entry from the user.
     param delete_distri_window: This is the window that has been made in delete_distributor function, which will be
@@ -69,5 +53,6 @@ def delete_distributor_confirmation(distributor_check, delete_distri_window, pro
     elif user_input_from_button not in program_data["distributors"]:
         messagebox.showerror("Error", f"Distributor {user_input_from_button} does not exist!")
     delete_distri_window.destroy()
-    limit_of_windows -= 1
+    # goes into limit_of_windows function
+    limit_of_windows['is opened'] = False
     update_distributors()

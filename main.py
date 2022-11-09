@@ -6,7 +6,15 @@ from distributor_operations.add_phone_number import *
 from product_operations.add_product import *
 from product_operations.product_groups_info import *
 from product_operations.add_quantity_to_product import *
+from product_operations.remove_quantity_from_product import *
+from product_operations.change_product_price import *
+from product_operations.delete_product import *
 from tkinter import *
+
+"""
+all colors used:
+grey, red, powder blue, #A49E97, #F4F3F1, #40FA5A, #FFCCA7
+"""
 
 
 def update_distributors():
@@ -89,7 +97,7 @@ def update_products():
         show_all_products.insert(END, f"\nAlcohol:\n")
         for alcohol in sorted(program_data['products']['alcohol']):
             show_alcohol = f"{integrate}{alcohol}:\n" \
-                           f"{integrate * 2}quantity: {program_data['products']['alcohol'][alcohol]['quantity']:.0f}, "\
+                           f"{integrate * 2}quantity: {program_data['products']['alcohol'][alcohol]['quantity']:.0f}, " \
                            f"price: {program_data['products']['alcohol'][alcohol]['price']:.2f}"
             show_all_products.insert(END, f"{show_alcohol}\n")
     else:
@@ -148,11 +156,14 @@ add_product.place(x=0, y=42)
 add_quantity_button = Button(window_frame, text='Add quantity', bd=3, font='Arial 14 bold', width=13,
                              command=lambda: add_quantity(program_data, update_products))
 add_quantity_button.place(x=0, y=82)
-remove_quantity = Button(window_frame, text='Remove quantity', bd=3, font='Arial 14 bold', width=13)
-remove_quantity.place(x=0, y=122)
-change_price = Button(window_frame, text='Change price', bd=3, font='Arial 14 bold', width=13)
-change_price.place(x=0, y=162)
-remove_product = Button(window_frame, text='Remove product', bd=3, font='Arial 14 bold', bg='red', width=13)
+remove_quantity_button = Button(window_frame, text='Remove quantity', bd=3, font='Arial 14 bold', width=13,
+                                command=lambda: remove_quantity(program_data, update_products))
+remove_quantity_button.place(x=0, y=122)
+change_price_button = Button(window_frame, text='Change price', bd=3, font='Arial 14 bold', width=13,
+                             command=lambda: change_price(program_data, update_products))
+change_price_button.place(x=0, y=162)
+remove_product = Button(window_frame, text='Remove product', bd=3, font='Arial 14 bold', bg='red', width=13,
+                        command=lambda: delete_product(program_data, update_products))
 remove_product.place(x=0, y=202)
 products_information = Button(window_frame, text='Product groups info', bd=3, font='Arial 15 bold',
                               command=lambda: show_products_information(window_frame,

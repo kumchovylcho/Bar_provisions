@@ -1,24 +1,10 @@
 from tkinter import *
+from extra_options.state_of_button import check_state_of_button
+from extra_options.limit_of_windows import *
 from tkinter import messagebox
-
-limit_of_windows = 1
-
-
-def ask_to_close_window(window):
-    """
-    param window: Is the window that will be closed if the user selects yes on the message box.
-    This function checks if the user tries to close the window with X button or alt-f4.
-    The only way to close the window is selecting yes from the message box or going through the steps of the button.
-    """
-    global limit_of_windows
-    question = messagebox.askokcancel('Confirm', 'Do you want to close the window ?')
-    if question:
-        limit_of_windows -= 1
-        window.destroy()
 
 
 def add_new_phone_number(program_data, update_distributors):
-    global limit_of_windows
     """
     param program_data: Holds the json file information.
     param update_distributors: Is a function which updates the screen on every distributor related button.
@@ -26,14 +12,14 @@ def add_new_phone_number(program_data, update_distributors):
     The entries are sent to new_phone_number_validation function.
     There are 2 labels giving information above the entries.
     """
-    if limit_of_windows < 2:
-        limit_of_windows += 1
+    if check_if_opened():
         add_phone_window = Tk()
         add_phone_window.title("Add phone")
         add_phone_window.geometry('250x230+800+400')
         add_phone_window.resizable(False, False)
         add_phone_window.config(bg='#A49E97')
-        Label(add_phone_window, bd=3, text='Write the phone number', font='Arial 16 bold', bg='#FFCCA7', width=20).pack()
+        Label(add_phone_window, bd=3, text='Write the phone number', font='Arial 16 bold', bg='#FFCCA7',
+              width=20).pack()
 
         entry_number = Entry(add_phone_window, bd=3, width=50, bg='powder blue', font='Arial 30 bold')
         entry_number.pack()
@@ -43,16 +29,21 @@ def add_new_phone_number(program_data, update_distributors):
         entry_distributor = Entry(add_phone_window, bd=3, width=50, bg='powder blue', font='Arial 30 bold')
         entry_distributor.pack()
 
-        add_button = Button(add_phone_window, bd=3, bg='#40FA5A',
+        add_button = Button(add_phone_window, bd=3, bg='grey', state='disabled',
                             font='Arial 20 bold', text='ADD',
-                            command=lambda: new_phone_number_validation(add_phone_window, entry_number, entry_distributor,
-                                                                        program_data, update_distributors))
+                            command=lambda: new_phone_number_validation(add_phone_window, entry_number,
+                                                                        entry_distributor, program_data,
+                                                                        update_distributors))
         add_button.pack()
         add_phone_window.protocol('WM_DELETE_WINDOW', lambda: ask_to_close_window(add_phone_window))
+        color_of_add_button = '#40FA5A'
+        entry_number.bind('<KeyRelease>', lambda message: check_state_of_button(entry_number, entry_distributor,
+                                                                                add_button, color_of_add_button))
+        entry_distributor.bind('<KeyRelease>', lambda message: check_state_of_button(entry_number, entry_distributor,
+                                                                                     add_button, color_of_add_button))
 
 
 def new_phone_number_validation(window, phone_number, distributor_name, program_data, update_distributors):
-    global limit_of_windows
     """
     param window: Is the window that has been made in function add_new_phone_number
     param phone_number: Is the entry phone-number from the user.
@@ -79,5 +70,6 @@ def new_phone_number_validation(window, phone_number, distributor_name, program_
                                           f"Please write a correct distributor name.")
 
     window.destroy()
-    limit_of_windows -= 1
+    # goes into limit_of_windows function
+    limit_of_windows['is opened'] = False
     update_distributors()
