@@ -83,7 +83,7 @@ def update_products():
                         f"price: {program_data['products']['food'][item]['price']:.2f}"
             show_all_products.insert(END, f"{show_food}\n")
     else:
-        show_all_products.insert(END, f"\nFood: None")
+        show_all_products.insert(END, f"Food: None\n")
     if program_data['products']['drinks']:
         show_all_products.insert(END, f"\nDrinks:\n")
         for drink in sorted(program_data['products']['drinks']):
@@ -92,7 +92,7 @@ def update_products():
                           f"price: {program_data['products']['drinks'][drink]['price']:.2f}"
             show_all_products.insert(END, f"{show_drinks}\n")
     else:
-        show_all_products.insert(END, f"\nDrinks: None\n")
+        show_all_products.insert(END, f"Drinks: None\n")
     if program_data['products']['alcohol']:
         show_all_products.insert(END, f"\nAlcohol:\n")
         for alcohol in sorted(program_data['products']['alcohol']):
@@ -101,10 +101,10 @@ def update_products():
                            f"price: {program_data['products']['alcohol'][alcohol]['price']:.2f}"
             show_all_products.insert(END, f"{show_alcohol}\n")
     else:
-        show_all_products.insert(END, f"Alcohol: None\n")
+        show_all_products.insert(END, f"Alcohol: None")
     if not program_data['products']['food'] and not program_data['products']['drinks'] \
             and not program_data['products']['alcohol']:
-        show_all_products.insert('1.0', "Currently there aren't any products. You must add them manually.")
+        show_all_products.insert('1.0', "Currently there aren't any products. You must add them manually.\n")
     show_all_products.pack(side=LEFT, fill=BOTH)
     scrollbar.config(command=show_all_products.yview)
     show_all_products.config(state=DISABLED, pady=3)
